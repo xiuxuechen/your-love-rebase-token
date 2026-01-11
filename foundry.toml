@@ -13,7 +13,8 @@ remappings = [
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts",
   "@chainlink/=lib/chainlink-evm",
   "forge-std/=lib/forge-std/src",
-  "foundry-devops/=lib/foundry-devops"
+  "foundry-devops/=lib/foundry-devops",
+  "@ccip/=lib/ccip"
 ]
 fs_permissions = [
  
