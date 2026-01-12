@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.24;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
@@ -94,15 +94,17 @@ contract YourLoverReBaseToken is
      * @notice 铸币
      * @param _to 接收者
      * @param _amount 数量
+     * @param _yearInterestRate 年利率
      */
     function mint(
         address _to,
-        uint256 _amount
+        uint256 _amount,
+        uint256 _yearInterestRate
     ) external moreThanZero(_amount) onlyRole(MINT_AND_BURN_ROLE) {
         //先把之前的存款结息
         _mintAccruedInterest(_to);
         //更新用户利率
-        sUserInterestRate[_to] = sYearInterestRate;
+        sUserInterestRate[_to] = _yearInterestRate;
         //打钱
         _mint(_to, _amount);
     }
@@ -261,5 +263,9 @@ contract YourLoverReBaseToken is
 
     function getYearInterestRate() public view returns (uint256) {
         return sYearInterestRate;
+    }
+
+    function getOwner() public view returns (address) {
+        return owner();
     }
 }

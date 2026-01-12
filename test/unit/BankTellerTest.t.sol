@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.24;
 
 import {BankTeller} from "../../src/BankTeller.sol";
 import {YourLoverReBaseToken} from "../../src/YourLoverReBaseToken.sol";
 import {
     IYourLoverReBaseToken
 } from "../../src/interfaces/IYourLoverReBaseToken.sol";
-import {Test, console} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 
 contract BankTellerTest is Test {
     YourLoverReBaseToken public token;

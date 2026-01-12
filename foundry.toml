@@ -4,9 +4,10 @@ out = "out"
 test = "test"
 script = "script"
 libs = ["lib"]
-solc = "0.8.28"
+solc = "0.8.24"
 allow_internal_expect_revert = true
 ffi = true
+no_storage_caching = true
 
 remappings = [
   "@openzeppelin/contracts@4.9.6/=lib/openzeppelin-contracts/contracts",
@@ -14,7 +15,8 @@ remappings = [
   "@chainlink/=lib/chainlink-evm",
   "forge-std/=lib/forge-std/src",
   "foundry-devops/=lib/foundry-devops",
-  "@ccip/=lib/ccip"
+  "@ccip/=lib/ccip",
+  "@chainlink/local/=lib/chainlink-local"
 ]
 fs_permissions = [
  

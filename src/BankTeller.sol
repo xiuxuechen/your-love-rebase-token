@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.24;
 
 import {IYourLoverReBaseToken} from "./interfaces/IYourLoverReBaseToken.sol";
 
@@ -46,7 +46,11 @@ contract BankTeller {
      * @notice 存款
      */
     function deposit() external payable {
-        iYourLoverReBaseToken.mint(msg.sender, msg.value);
+        iYourLoverReBaseToken.mint(
+            msg.sender,
+            msg.value,
+            iYourLoverReBaseToken.getYearInterestRate()
+        );
         emit Deposit(msg.sender, msg.value);
     }
 

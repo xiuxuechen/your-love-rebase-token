@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.24;
 
 import {BankTeller} from "../../src/BankTeller.sol";
 import {YourLoverReBaseToken} from "../../src/YourLoverReBaseToken.sol";
@@ -10,10 +10,12 @@ contract YourLoverReBaseTokenTest is Test {
 
     address MINT_AND_BURN_ROLE_USER = makeAddr("xxc");
     address XSX_USER = makeAddr("xsx");
+    uint256 yearInterestRate;
 
     function setUp() public {
         token = new YourLoverReBaseToken();
         token.grantMintAndBurnRole(MINT_AND_BURN_ROLE_USER);
+        yearInterestRate = token.getYearInterestRate();
     }
 
     function testOwner() public view {
@@ -92,7 +94,7 @@ contract YourLoverReBaseTokenTest is Test {
                 token.MINT_AND_BURN_ROLE()
             )
         );
-        token.mint(address(this), 10e18);
+        token.mint(address(this), 10e18, yearInterestRate);
         vm.stopPrank();
     }
 
@@ -104,15 +106,15 @@ contract YourLoverReBaseTokenTest is Test {
                     .selector
             )
         );
-        token.mint(address(this), 0);
+        token.mint(address(this), 0, yearInterestRate);
     }
 
     function testMintInterest() public {
         vm.startPrank(MINT_AND_BURN_ROLE_USER);
-        token.mint(XSX_USER, 10 ether);
+        token.mint(XSX_USER, 10 ether, yearInterestRate);
         uint256 firstMintTime = token.getUserDepositTime(XSX_USER);
         vm.warp(1 days);
-        token.mint(XSX_USER, 10 ether);
+        token.mint(XSX_USER, 10 ether, yearInterestRate);
         uint256 secondMintTime = token.getUserDepositTime(XSX_USER);
         uint256 depositedTime = secondMintTime - firstMintTime;
         //利息
@@ -146,7 +148,7 @@ contract YourLoverReBaseTokenTest is Test {
 
     function testBalance() public {
         vm.startPrank(MINT_AND_BURN_ROLE_USER);
-        token.mint(address(this), 10e18);
+        token.mint(address(this), 10e18, yearInterestRate);
         uint256 balance = token.balanceOf(address(this));
         vm.stopPrank();
         assertEq(balance, 10e18);
@@ -154,7 +156,7 @@ contract YourLoverReBaseTokenTest is Test {
 
     function testPrincipalBalance() public {
         vm.startPrank(MINT_AND_BURN_ROLE_USER);
-        token.mint(address(this), 10 ether);
+        token.mint(address(this), 10 ether, yearInterestRate);
         uint256 balance = token.principalBalanceOf(address(this));
         vm.stopPrank();
         assertEq(balance, 10e18);
@@ -166,7 +168,7 @@ contract YourLoverReBaseTokenTest is Test {
 
     function testTransfer() public {
         vm.prank(MINT_AND_BURN_ROLE_USER);
-        token.mint(address(this), 10 ether);
+        token.mint(address(this), 10 ether, yearInterestRate);
 
         assertEq(token.getUserInterestRate(XSX_USER), 0);
 
@@ -186,7 +188,7 @@ contract YourLoverReBaseTokenTest is Test {
 
     function testTransferFrom() public {
         vm.prank(MINT_AND_BURN_ROLE_USER);
-        token.mint(address(this), 10 ether);
+        token.mint(address(this), 10 ether, yearInterestRate);
 
         vm.prank(address(this));
         token.approve(XSX_USER, 10 ether);
