@@ -205,6 +205,10 @@ contract YourLoverReBaseToken is
      * @param _user 用户
      */
     function _mintAccruedInterest(address _user) internal {
+        if (sUserLatestDepositTime[_user] == 0) {
+            sUserLatestDepositTime[_user] = block.timestamp;
+            return;
+        }
         //计算利息
         uint256 interest = _calculateInterest(
             _user,

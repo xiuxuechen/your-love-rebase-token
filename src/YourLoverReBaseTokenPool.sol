@@ -35,7 +35,7 @@ contract YourLoverReBaseTokenPool is TokenPool {
         uint256 userInterestRate = reBaseToken.getUserInterestRate(
             lockOrBurnIn.originalSender
         );
-        reBaseToken.burn(address(i_token), lockOrBurnIn.amount);
+        reBaseToken.burn(address(this), lockOrBurnIn.amount);
         lockOrBurnOut = Pool.LockOrBurnOutV1({
             destTokenAddress: getRemoteToken(lockOrBurnIn.remoteChainSelector),
             destPoolData: abi.encode(userInterestRate)
