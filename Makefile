@@ -15,8 +15,8 @@ ARBITRUM_RNM_PROXY_ADDRESS := 0x9527E2d01A3064ef6b50c1Da1C0cC523803BCFF2
 ARBITRUM_CHAIN_SELECTOR := 3478487238524512106
 ARBITRUM_LINK_ADDRESS := 0xb1D4538B4571d411F07960EF2838Ce337FE1E80E
 
-ARBITRUM_POOL_ADDRESS := 0x8214F36b8914454d3fE2ecfeC95320Bcb8957A03
-ARBITRUM_REBASE_TOKEN_ADDRESS := 0x045d09E0a1C4Be23c417E8aC0D80E373BD7Fef9c
+ARBITRUM_POOL_ADDRESS := 0xEeDdA1a0aB5931702a135D7f34fD627895310C5a
+ARBITRUM_REBASE_TOKEN_ADDRESS := 0xE69696E979A1655F0D3f703088CBD409662dCAC6
 
 # ==================== SEPOLIA ====================
 SEPOLIA_REGISTRY_MODULE_OWNER_CUSTOM := 0x62e731218d0D47305aba2BE3751E7EE9E5520790
@@ -26,8 +26,8 @@ SEPOLIA_RNM_PROXY_ADDRESS := 0xba3f6251de62dED61Ff98590cB2fDf6871FbB991
 SEPOLIA_CHAIN_SELECTOR := 16015286601757825753
 SEPOLIA_LINK_ADDRESS := 0x779877A7B0D9E8603169DdbD7836e478b4624789
 
-SEPOLIA_POOL_ADDRESS := 0xc63e16df5E804bCBde6902520FbFD3Da1c1E43ab
-SEPOLIA_REBASE_TOKEN_ADDRESS := 0xF370Aa215D4F551757e5AAf3789fA05Ffd947ac8
+SEPOLIA_POOL_ADDRESS := 0xceafb5e24907361a8e50597D160105812384cD54
+SEPOLIA_REBASE_TOKEN_ADDRESS := 0x9Da0Fea55C5ba62aD89603a8676993A3ca0051Ea
 
 
 # ==================== 环境检查函数 ====================
@@ -79,17 +79,19 @@ deploy-pool-sepolia: check-sepolia-env
 	@echo "🚀 部署到 Sepolia 测试网..."
 	@if [ -z "$(ETHERSCAN_API_KEY)" ]; then \
 		echo "⚠️  跳过合约验证 (ETHERSCAN_API_KEY 未设置)"; \
-		forge script script/YourLoverReBaseTokenPoolDeploy.s.sol \
+		forge script script/LoveReBaseTokenPoolDeploy.s.sol \
 			--rpc-url $(SEPOLIA_RPC_URL) \
 			--private-key $(SEPOLIA_PRIVATE_KEY) \
 			--broadcast \
+			--sig "run(string)" "MLRBT" \
 			-vvvv; \
 	else \
 		echo "✅ 启用合约验证"; \
-		forge script script/YourLoverReBaseTokenPoolDeploy.s.sol \
+		forge script script/LoveReBaseTokenPoolDeploy.s.sol \
 			--rpc-url $(SEPOLIA_RPC_URL) \
 			--private-key $(SEPOLIA_PRIVATE_KEY) \
 			--broadcast \
+			--sig "run(string)" "MLRBT" \
 			--verify \
 			--etherscan-api-key $(ETHERSCAN_API_KEY) \
 			-vvvv; \
@@ -99,17 +101,19 @@ deploy-pool-arb: check-sepolia-env
 	@echo "🚀 部署到 Arb-Sepolia 测试网..."
 	@if [ -z "$(ETHERSCAN_API_KEY)" ]; then \
 		echo "⚠️  跳过合约验证 (ETHERSCAN_API_KEY 未设置)"; \
-		forge script script/YourLoverReBaseTokenPoolDeploy.s.sol \
+		forge script script/LoveReBaseTokenPoolDeploy.s.sol \
 			--rpc-url $(ARBITRUM_SEPOLIA_RPC_URL) \
 			--private-key $(SEPOLIA_PRIVATE_KEY) \
 			--broadcast \
+			--sig "run(string)" "YLRBT" \
 			-vvvv; \
 	else \
 		echo "✅ 启用合约验证"; \
-		forge script script/YourLoverReBaseTokenPoolDeploy.s.sol \
+		forge script script/LoveReBaseTokenPoolDeploy.s.sol \
 			--rpc-url $(ARBITRUM_SEPOLIA_RPC_URL) \
 			--private-key $(SEPOLIA_PRIVATE_KEY) \
 			--broadcast \
+			--sig "run(string)" "YLRBT" \
 			--verify \
 			--etherscan-api-key $(ETHERSCAN_API_KEY) \
 			-vvvv; \
@@ -192,18 +196,25 @@ deploy-configurePool-sepolia:
 			-vvvv; \
 	fi	
 
-call-update-pool:
+deploy-configurePool-arb:
 	@echo "🚀 配置代币池映射关系..." 
 	cast send $(ARBITRUM_POOL_ADDRESS) \
-    --rpc-url $(ARBITRUM_SEPOLIA_RPC_URL) \
-    --private-key $(SEPOLIA_PRIVATE_KEY) \
-    "applyChainUpdates((uint64,bool,bytes,bytes,(bool,uint128,uint128),(bool,uint128,uint128))[])" \
-    "[($(SEPOLIA_CHAIN_SELECTOR), true, $(shell cast abi-encode "f(address)" ${SEPOLIA_POOL_ADDRESS}), $(shell cast abi-encode "f(address)" $(SEPOLIA_REBASE_TOKEN_ADDRESS)), (false, 0, 0), (false, 0, 0))]" \	
+		--rpc-url $(ARBITRUM_SEPOLIA_RPC_URL) \
+		--private-key $(SEPOLIA_PRIVATE_KEY) \
+		"applyChainUpdates((uint64,bool,bytes,bytes,(bool,uint128,uint128),(bool,uint128,uint128))[])" \
+		"[($(SEPOLIA_CHAIN_SELECTOR), true, \
+		  $(shell cast abi-encode "f(address)" $(SEPOLIA_POOL_ADDRESS)), \
+		  $(shell cast abi-encode "f(address)" $(SEPOLIA_REBASE_TOKEN_ADDRESS)), \
+		  (false, 0, 0), (false, 0, 0))]"
 
-call-bankTeller-sepolia:
+
+call-bankTeller-deposit-sepolia:
 	@echo "🚀 调用 BankTeller..."
-	cast send 0x5485257f8D5A056c51d4df3fC5Eb7BCA011681d3 --value 1000000000000000000 --rpc-url ${SEPOLIA_RPC_URL} --private-key $(SEPOLIA_PRIVATE_KEY) "deposit()"
+	cast send 0x16D2328F3FCDA61785151F243C1eac6F2342BeAF --value 1000000000000000000 --rpc-url ${SEPOLIA_RPC_URL} --private-key $(SEPOLIA_PRIVATE_KEY) "deposit()"
 
+call-bankTeller-redeem-sepolia:
+	@echo "🚀 调用 BankTeller..."
+	cast send 0x16D2328F3FCDA61785151F243C1eac6F2342BeAF --rpc-url ${SEPOLIA_RPC_URL} --private-key $(SEPOLIA_PRIVATE_KEY) "redeem(uint256)" 1000000000000000000	
 
 call-bridge-tokens: check-sepolia-env
 	@echo "🚀 桥接代币..."

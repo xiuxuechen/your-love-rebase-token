@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {YourLoverReBaseToken} from "../../src/YourLoverReBaseToken.sol";
+import {LoveReBaseToken} from "../../src/LoveReBaseToken.sol";
 import {Test, console} from "forge-std/Test.sol";
 
-contract YourLoverReBaseTokenTest is Test {
-    YourLoverReBaseToken public token;
+contract LoveReBaseTokenTest is Test {
+    LoveReBaseToken public token;
 
     address MINT_AND_BURN_ROLE_USER = makeAddr("xxc");
     address XSX_USER = makeAddr("xsx");
     uint256 yearInterestRate;
 
     function setUp() public {
-        token = new YourLoverReBaseToken();
+        token = new LoveReBaseToken("LVRBT");
         token.grantMintAndBurnRole(MINT_AND_BURN_ROLE_USER);
         yearInterestRate = token.getYearInterestRate();
     }
@@ -64,8 +64,8 @@ contract YourLoverReBaseTokenTest is Test {
     function testCantSetIncreaseInterestRate() public {
         vm.expectRevert(
             abi.encodeWithSelector(
-                YourLoverReBaseToken
-                    .YourLoverReBaseToken__InterestRateOnlyCanBeDecreased
+                LoveReBaseToken
+                    .LoveReBaseToken__InterestRateOnlyCanBeDecreased
                     .selector,
                 5e16,
                 6e16
@@ -100,9 +100,7 @@ contract YourLoverReBaseTokenTest is Test {
     function testCantMintZero() public {
         vm.expectRevert(
             abi.encodeWithSelector(
-                YourLoverReBaseToken
-                    .YourLoverReBaseToken__NeedsMoreThanZero
-                    .selector
+                LoveReBaseToken.LoveReBaseToken__NeedsMoreThanZero.selector
             )
         );
         token.mint(address(this), 0, yearInterestRate);

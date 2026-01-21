@@ -2,11 +2,9 @@
 pragma solidity ^0.8.24;
 
 import {BankTeller} from "../../src/BankTeller.sol";
-import {
-    IYourLoverReBaseToken
-} from "../../src/interfaces/IYourLoverReBaseToken.sol";
-import {YourLoverReBaseToken} from "../../src/YourLoverReBaseToken.sol";
-import {YourLoverReBaseTokenPool} from "../../src/YourLoverReBaseTokenPool.sol";
+import {ILoveReBaseToken} from "../../src/interfaces/ILoveReBaseToken.sol";
+import {LoveReBaseToken} from "../../src/LoveReBaseToken.sol";
+import {LoveReBaseTokenPool} from "../../src/LoveReBaseTokenPool.sol";
 import {Test, console} from "forge-std/Test.sol";
 import {
     CCIPLocalSimulatorFork,
@@ -45,8 +43,8 @@ contract CrossChainInteractionTest is Test {
     /**
      * ----------------------源链配置参数------------------------
      */
-    YourLoverReBaseToken sepoliaRebaseToken;
-    YourLoverReBaseTokenPool sepoliaPool;
+    LoveReBaseToken sepoliaRebaseToken;
+    LoveReBaseTokenPool sepoliaPool;
     TokenAdminRegistry tokenAdminRegistrySepolia;
     Register.NetworkDetails sepoliaNetworkDetails;
     RegistryModuleOwnerCustom registryModuleOwnerCustomSepolia;
@@ -54,8 +52,8 @@ contract CrossChainInteractionTest is Test {
     /**
      * ----------------------目标链配置参数------------------------
      */
-    YourLoverReBaseToken arbSepoliaRebaseToken;
-    YourLoverReBaseTokenPool arbSepoliaPool;
+    LoveReBaseToken arbSepoliaRebaseToken;
+    LoveReBaseTokenPool arbSepoliaPool;
     TokenAdminRegistry tokenAdminRegistryArbSepolia;
     Register.NetworkDetails arbSepoliaNetworkDetails;
     RegistryModuleOwnerCustom registryModuleOwnerCustomArbSepolia;
@@ -75,15 +73,15 @@ contract CrossChainInteractionTest is Test {
             block.chainid
         );
         vm.startPrank(owner);
-        sepoliaRebaseToken = new YourLoverReBaseToken();
-        sepoliaPool = new YourLoverReBaseTokenPool(
+        sepoliaRebaseToken = new LoveReBaseToken("LVRBT");
+        sepoliaPool = new LoveReBaseTokenPool(
             IERC20(address(sepoliaRebaseToken)),
             allowlist,
             sepoliaNetworkDetails.rmnProxyAddress,
             sepoliaNetworkDetails.routerAddress
         );
         bankTeller = new BankTeller(
-            IYourLoverReBaseToken(address(sepoliaRebaseToken))
+            ILoveReBaseToken(address(sepoliaRebaseToken))
         );
         vm.deal(address(bankTeller), 1 ether);
         sepoliaRebaseToken.grantMintAndBurnRole(address(bankTeller));
@@ -115,8 +113,8 @@ contract CrossChainInteractionTest is Test {
         arbSepoliaNetworkDetails = ccipLocalSimulatorFork.getNetworkDetails(
             block.chainid
         );
-        arbSepoliaRebaseToken = new YourLoverReBaseToken();
-        arbSepoliaPool = new YourLoverReBaseTokenPool(
+        arbSepoliaRebaseToken = new LoveReBaseToken("LVRBT");
+        arbSepoliaPool = new LoveReBaseTokenPool(
             IERC20(address(arbSepoliaRebaseToken)),
             allowlist,
             arbSepoliaNetworkDetails.rmnProxyAddress,
@@ -173,7 +171,7 @@ contract CrossChainInteractionTest is Test {
         uint256 fork,
         TokenPool localPool,
         TokenPool remotePool,
-        IYourLoverReBaseToken remoteToken,
+        ILoveReBaseToken remoteToken,
         Register.NetworkDetails memory remoteNetworkDetails
     ) public {
         vm.selectFork(fork);
@@ -217,8 +215,8 @@ contract CrossChainInteractionTest is Test {
         uint256 remoteFork,
         Register.NetworkDetails memory localNetworkDetails,
         Register.NetworkDetails memory remoteNetworkDetails,
-        YourLoverReBaseToken localToken,
-        YourLoverReBaseToken remoteToken
+        LoveReBaseToken localToken,
+        LoveReBaseToken remoteToken
     ) public {
         vm.selectFork(localFork);
         vm.startPrank(xsxUser);

@@ -7,9 +7,9 @@ import {
     IERC20
 } from "@ccip/contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {IYourLoverReBaseToken} from "./interfaces/IYourLoverReBaseToken.sol";
+import {ILoveReBaseToken} from "./interfaces/ILoveReBaseToken.sol";
 
-contract YourLoverReBaseTokenPool is TokenPool {
+contract LoveReBaseTokenPool is TokenPool {
     constructor(
         IERC20 _token,
         address[] memory _allowlist,
@@ -29,9 +29,7 @@ contract YourLoverReBaseTokenPool is TokenPool {
         returns (Pool.LockOrBurnOutV1 memory lockOrBurnOut)
     {
         _validateLockOrBurn(lockOrBurnIn);
-        IYourLoverReBaseToken reBaseToken = IYourLoverReBaseToken(
-            address(i_token)
-        );
+        ILoveReBaseToken reBaseToken = ILoveReBaseToken(address(i_token));
         uint256 userInterestRate = reBaseToken.getUserInterestRate(
             lockOrBurnIn.originalSender
         );
@@ -53,9 +51,7 @@ contract YourLoverReBaseTokenPool is TokenPool {
             releaseOrMintIn.sourcePoolData,
             (uint256)
         );
-        IYourLoverReBaseToken reBaseToken = IYourLoverReBaseToken(
-            address(i_token)
-        );
+        ILoveReBaseToken reBaseToken = ILoveReBaseToken(address(i_token));
         reBaseToken.mint(
             releaseOrMintIn.receiver,
             releaseOrMintIn.amount,

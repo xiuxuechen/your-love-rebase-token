@@ -2,14 +2,12 @@
 pragma solidity ^0.8.24;
 
 import {BankTeller} from "../../src/BankTeller.sol";
-import {YourLoverReBaseToken} from "../../src/YourLoverReBaseToken.sol";
-import {
-    IYourLoverReBaseToken
-} from "../../src/interfaces/IYourLoverReBaseToken.sol";
+import {LoveReBaseToken} from "../../src/LoveReBaseToken.sol";
+import {ILoveReBaseToken} from "../../src/interfaces/ILoveReBaseToken.sol";
 import {Test} from "forge-std/Test.sol";
 
 contract BankTellerTest is Test {
-    YourLoverReBaseToken public token;
+    LoveReBaseToken public token;
     BankTeller public bankTeller;
 
     address MINT_AND_BURN_ROLE_USER = makeAddr("xxc");
@@ -19,8 +17,8 @@ contract BankTellerTest is Test {
     event Redeem(address indexed user, uint256 indexed amount);
 
     function setUp() public {
-        token = new YourLoverReBaseToken();
-        bankTeller = new BankTeller(IYourLoverReBaseToken(address(token)));
+        token = new LoveReBaseToken("LVRBT");
+        bankTeller = new BankTeller(ILoveReBaseToken(address(token)));
         token.grantMintAndBurnRole(address(bankTeller));
     }
 

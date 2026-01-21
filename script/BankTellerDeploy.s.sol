@@ -3,19 +3,17 @@ pragma solidity ^0.8.24;
 
 import {Script} from "forge-std/Script.sol";
 import {BankTeller} from "../src/BankTeller.sol";
-import {YourLoverReBaseToken} from "../src/YourLoverReBaseToken.sol";
-import {
-    IYourLoverReBaseToken
-} from "../src/interfaces/IYourLoverReBaseToken.sol";
+import {LoveReBaseToken} from "../src/LoveReBaseToken.sol";
+import {ILoveReBaseToken} from "../src/interfaces/ILoveReBaseToken.sol";
 
 contract BankTellerDeploy is Script {
     function deployBankTeller(
-        address _yourLoverReBaseToken
+        address _LoveReBaseToken
     ) public returns (BankTeller) {
         BankTeller bankTeller = new BankTeller(
-            IYourLoverReBaseToken(_yourLoverReBaseToken)
+            ILoveReBaseToken(_LoveReBaseToken)
         );
-        IYourLoverReBaseToken(_yourLoverReBaseToken).grantMintAndBurnRole(
+        ILoveReBaseToken(_LoveReBaseToken).grantMintAndBurnRole(
             address(bankTeller)
         );
         return bankTeller;
@@ -30,7 +28,7 @@ contract BankTellerDeploy is Script {
         }
         vm.startBroadcast(deployerPrivateKey);
         BankTeller bankTeller = deployBankTeller(_tokenAddress);
-        IYourLoverReBaseToken(_tokenAddress).grantMintAndBurnRole(
+        ILoveReBaseToken(_tokenAddress).grantMintAndBurnRole(
             address(bankTeller)
         );
         vm.stopBroadcast();

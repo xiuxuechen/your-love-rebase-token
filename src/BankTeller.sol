@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IYourLoverReBaseToken} from "./interfaces/IYourLoverReBaseToken.sol";
+import {ILoveReBaseToken} from "./interfaces/ILoveReBaseToken.sol";
 
 /**
  * @title 银行柜员
  * @dev 负责存款、赎回
  */
 contract BankTeller {
-    IYourLoverReBaseToken public immutable iYourLoverReBaseToken;
+    ILoveReBaseToken public immutable iLoveReBaseToken;
 
     /**
      * ----------------------事件------------------------
@@ -36,8 +36,8 @@ contract BankTeller {
     /**
      * --------------------构造函数----------------------
      */
-    constructor(IYourLoverReBaseToken _yourLoverReBaseToken) {
-        iYourLoverReBaseToken = _yourLoverReBaseToken;
+    constructor(ILoveReBaseToken _yourLoverReBaseToken) {
+        iLoveReBaseToken = _yourLoverReBaseToken;
     }
 
     receive() external payable {}
@@ -46,10 +46,10 @@ contract BankTeller {
      * @notice 存款
      */
     function deposit() external payable {
-        iYourLoverReBaseToken.mint(
+        iLoveReBaseToken.mint(
             msg.sender,
             msg.value,
-            iYourLoverReBaseToken.getYearInterestRate()
+            iLoveReBaseToken.getYearInterestRate()
         );
         emit Deposit(msg.sender, msg.value);
     }
@@ -60,9 +60,9 @@ contract BankTeller {
      */
     function redeem(uint256 _amount) external moreThanZero(_amount) {
         if (_amount == type(uint256).max) {
-            _amount = iYourLoverReBaseToken.balanceOf(msg.sender);
+            _amount = iLoveReBaseToken.balanceOf(msg.sender);
         }
-        iYourLoverReBaseToken.burn(msg.sender, _amount);
+        iLoveReBaseToken.burn(msg.sender, _amount);
         (bool success, ) = payable(msg.sender).call{value: _amount}("");
         if (!success) {
             revert BankTeller__RedeemFailed();

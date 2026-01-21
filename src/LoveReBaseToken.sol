@@ -4,22 +4,17 @@ pragma solidity ^0.8.24;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {IYourLoverReBaseToken} from "./interfaces/IYourLoverReBaseToken.sol";
+import {ILoveReBaseToken} from "./interfaces/ILoveReBaseToken.sol";
 
-contract YourLoverReBaseToken is
-    ERC20,
-    Ownable,
-    AccessControl,
-    IYourLoverReBaseToken
-{
+contract LoveReBaseToken is ERC20, Ownable, AccessControl, ILoveReBaseToken {
     /**
      * ----------------------异常------------------------
      */
-    error YourLoverReBaseToken__InterestRateOnlyCanBeDecreased(
+    error LoveReBaseToken__InterestRateOnlyCanBeDecreased(
         uint256 currentInterestRate,
         uint256 newInterestRate
     );
-    error YourLoverReBaseToken__NeedsMoreThanZero();
+    error LoveReBaseToken__NeedsMoreThanZero();
 
     /**
      * --------------------常量----------------------
@@ -53,7 +48,7 @@ contract YourLoverReBaseToken is
     /// @dev 确保大于0
     modifier moreThanZero(uint256 amount) {
         if (amount == 0) {
-            revert YourLoverReBaseToken__NeedsMoreThanZero();
+            revert LoveReBaseToken__NeedsMoreThanZero();
         }
         _;
     }
@@ -61,7 +56,9 @@ contract YourLoverReBaseToken is
     /**
      * --------------------构造函数----------------------
      */
-    constructor() Ownable(msg.sender) ERC20("YourLoverReBaseToken", "YLRBT") {}
+    constructor(
+        string memory _symbol
+    ) Ownable(msg.sender) ERC20("LoveReBaseToken", _symbol) {}
 
     /**
      * --------------------外部调用函数---------------------
@@ -81,7 +78,7 @@ contract YourLoverReBaseToken is
      */
     function setInterestRate(uint256 _interestRate) external onlyOwner {
         if (_interestRate > sYearInterestRate) {
-            revert YourLoverReBaseToken__InterestRateOnlyCanBeDecreased(
+            revert LoveReBaseToken__InterestRateOnlyCanBeDecreased(
                 sYearInterestRate,
                 _interestRate
             );
@@ -233,7 +230,7 @@ contract YourLoverReBaseToken is
      */
     function balanceOf(
         address _user
-    ) public view override(ERC20, IYourLoverReBaseToken) returns (uint256) {
+    ) public view override(ERC20, ILoveReBaseToken) returns (uint256) {
         uint256 userBalance = principalBalanceOf(_user);
         uint256 userInterestRate = getUserInterestRate(_user);
         return

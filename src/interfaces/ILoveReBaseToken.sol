@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-interface IYourLoverReBaseToken {
+interface ILoveReBaseToken {
     /**
      * @notice 授权
      * @param _address 授权地址
